@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def decompose(user_preference: np.ndarray, latent_factor_num: int) -> (np.ndarray, np.ndarray):
+def decompose(user_preference: np.ndarray, latent_factor_num: int = 1) -> (np.ndarray, np.ndarray):
     """
     分解用户偏好矩阵至两个初始化矩阵 U 和 V，U 的列数和 V 的行数为 latent_factor_num
     :param user_preference: 分解用户偏好矩阵
