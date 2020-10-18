@@ -11,8 +11,9 @@ def decompose(user_preference: np.ndarray, latent_factor_num: int = 1) -> (np.nd
     rows_num, column_num = user_preference.shape
     avg = np.sum(user_preference) / np.size(user_preference)
     init_element = np.sqrt(avg / latent_factor_num)
-    return np.full((rows_num, latent_factor_num), init_element), \
-           np.full((latent_factor_num, rows_num), init_element)
+    u_init, v_init = np.full((rows_num, latent_factor_num), init_element), \
+                     np.full((latent_factor_num, rows_num), init_element)
+    return u_init, v_init
 
 
 def get_rmse(u_mat: np.ndarray, v_mat: np.ndarray, user_preference: np.ndarray) -> np.float64:
