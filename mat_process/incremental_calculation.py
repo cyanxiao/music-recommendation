@@ -11,12 +11,12 @@ def get_x_in_u(u_single_line_mat: np.ndarray, v_mat: np.ndarray, user_preference
     """
     assert u_single_line_mat.ndim == 1, 'u_single_line_mat row number overflows.'
     assert user_preference_single_line.ndim == 1, 'user_preference_single_line row number overflows.'
-    tmp_new_single_line_mat = u_single_line_mat
+    new_u_single_line_mat = u_single_line_mat
     for i in range(u_single_line_mat.shape[0]):
-        tmp_new_single_line_mat[i] = 0
-        tmp_user_preference_single_line = np.dot(tmp_new_single_line_mat, v_mat)
+        new_u_single_line_mat[i] = 0
+        tmp_user_preference_single_line = np.dot(new_u_single_line_mat, v_mat)
         other_sum = np.sum(user_preference_single_line - tmp_user_preference_single_line)
         coefficient_x = np.sum(v_mat[i, :])
         x = other_sum / coefficient_x
-        tmp_new_single_line_mat[i] = x
-    return tmp_new_single_line_mat
+        new_u_single_line_mat[i] = x
+    return new_u_single_line_mat
