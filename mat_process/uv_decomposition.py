@@ -24,5 +24,12 @@ def get_rmse(u_mat: np.ndarray, v_mat: np.ndarray, user_preference: np.ndarray) 
     :param user_preference: 用户偏好矩阵
     :return: RMSE
     """
-    residue_mat = user_preference - np.dot(u_mat, v_mat)
+    expected_mat = np.dot(u_mat, v_mat)  # U * V
+    residue_mat = np.full([user_preference.shape[0], user_preference.shape[1]], 0, "float")
+    for i in range(user_preference.shape[0]):
+        for j in range(user_preference.shape[1]):
+            if np.isnan(user_preference[i, j]):
+                residue_mat[i, j] = 0  # 忽略 NaN
+            else:
+                residue_mat[i, j] = user_preference[i, j] - expected_mat[i, j]
     return np.sqrt(np.sum(residue_mat ** 2) / np.size(residue_mat))
