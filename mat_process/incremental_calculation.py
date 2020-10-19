@@ -11,7 +11,7 @@ def get_x_in_u(u_single_line_mat: np.ndarray, v_mat: np.ndarray, user_preference
     """
     assert u_single_line_mat.ndim == 1, 'u_single_line_mat row number overflows.'
     assert user_preference_single_line.ndim == 1, 'user_preference_single_line row number overflows.'
-    result = np.full([user_preference_single_line.shape[0]], 0)
+    result = np.full([u_single_line_mat.shape[0]], 0)
     for i in range(u_single_line_mat.shape[0]):
         tmp_new_single_line_mat = u_single_line_mat
         tmp_new_single_line_mat[i] = 0
