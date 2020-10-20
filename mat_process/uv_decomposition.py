@@ -9,10 +9,11 @@ def decompose(user_preference: np.ndarray, latent_factor_num: int = 1) -> (np.nd
     :return: U, V
     """
     rows_num, column_num = user_preference.shape
-    avg = np.sum(user_preference) / np.size(user_preference)
+    not_nan_elements_num = np.count_nonzero(~np.isnan(user_preference))
+    avg = np.nansum(user_preference) / not_nan_elements_num
     init_element = np.sqrt(avg / latent_factor_num)
     u_init, v_init = np.full((rows_num, latent_factor_num), init_element), \
-                     np.full((latent_factor_num, rows_num), init_element)
+                     np.full((latent_factor_num, column_num), init_element)
     return u_init, v_init
 
 
