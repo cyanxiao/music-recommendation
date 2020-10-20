@@ -9,10 +9,12 @@ def decompose(user_preference: np.ndarray, latent_factor_num: int = 1) -> (np.nd
     :return: U, V
     """
     rows_num, column_num = user_preference.shape
-    avg = np.sum(user_preference) / np.size(user_preference)
+    not_nan_elements_num = np.count_nonzero(~np.isnan(user_preference))
+    avg = np.nansum(user_preference) / not_nan_elements_num
     init_element = np.sqrt(avg / latent_factor_num)
-    return np.full((rows_num, latent_factor_num), init_element), \
-           np.full((latent_factor_num, rows_num), init_element)
+    u_init, v_init = np.full((rows_num, latent_factor_num), init_element), \
+                     np.full((latent_factor_num, column_num), init_element)
+    return u_init, v_init
 
 
 def get_rmse(u_mat: np.ndarray, v_mat: np.ndarray, user_preference: np.ndarray) -> np.float64:
@@ -23,5 +25,12 @@ def get_rmse(u_mat: np.ndarray, v_mat: np.ndarray, user_preference: np.ndarray) 
     :param user_preference: 用户偏好矩阵
     :return: RMSE
     """
-    residue_mat = user_preference - np.dot(u_mat, v_mat)
+    expected_mat = np.dot(u_mat, v_mat)  # U * V
+    residue_mat = np.full([user_preference.shape[0], user_preference.shape[1]], 0, "float")
+    for i in range(user_preference.shape[0]):
+        for j in range(user_preference.shape[1]):
+            if np.isnan(user_preference[i, j]):
+                residue_mat[i, j] = 0  # 忽略 NaN
+            else:
+                residue_mat[i, j] = user_preference[i, j] - expected_mat[i, j]
     return np.sqrt(np.sum(residue_mat ** 2) / np.size(residue_mat))
