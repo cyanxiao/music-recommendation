@@ -11,7 +11,7 @@ def get_x_in_u(u_single_line_mat: np.ndarray, v_mat: np.ndarray, user_preference
     """
     assert u_single_line_mat.ndim == 1, 'u_single_line_mat row number overflows.'
     assert user_preference_single_line.ndim == 1, 'user_preference_single_line row number overflows.'
-    new_u_single_line_mat = u_single_line_mat
+    new_u_single_line_mat = u_single_line_mat  # 待计算的 U 的新行
     for i in range(u_single_line_mat.shape[0]):
         new_u_single_line_mat[i] = 0
         tmp_user_preference_single_line = np.dot(new_u_single_line_mat, v_mat)
