@@ -22,7 +22,6 @@ def _get_x_in_u(u_single_line_mat: np.ndarray, v_mat: np.ndarray,
         new_u_single_line_mat[i] = 0
         tmp_user_preference_single_line = np.dot(new_u_single_line_mat, v_mat)
         other_sum = np.nansum(user_preference_single_line - tmp_user_preference_single_line)
-        # TODO: 需要进一步检查生成矩阵
         coefficient_x = _get_coefficient_x(v_mat[i, :], user_preference_single_line)
         x = other_sum / coefficient_x
         new_u_single_line_mat[i] = x
