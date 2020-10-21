@@ -47,7 +47,7 @@ def _get_coefficient_x(v_single_line_mat: np.ndarray, user_preference_single_lin
 """
 
 
-def get_x(u: np.ndarray, v: np.ndarray, m: np.ndarray, r: int, s: int) -> int:
+def get_x(u: np.ndarray, v: np.ndarray, m: np.ndarray, r: int, s: int) -> float:
     """
     获取 U 矩阵在 (r, s) 位置的元素的值，使 M 与 UV 间的 RMSE 最小
     :param u: U
@@ -71,7 +71,7 @@ def get_x(u: np.ndarray, v: np.ndarray, m: np.ndarray, r: int, s: int) -> int:
     return numerator / denominator
 
 
-def get_y(u: np.ndarray, v: np.ndarray, m: np.ndarray, r: int, s: int) -> int:
+def get_y(u: np.ndarray, v: np.ndarray, m: np.ndarray, r: int, s: int) -> float:
     """
     获取 V 矩阵在 (r, s) 位置的元素的值，使 M 与 UV 间的 RMSE 最小
     :param u: U
