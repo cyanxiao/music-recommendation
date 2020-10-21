@@ -73,13 +73,13 @@ def get_x(u: np.ndarray, v: np.ndarray, m: np.ndarray, r: int, s: int) -> int:
 
 def get_y(u: np.ndarray, v: np.ndarray, m: np.ndarray, r: int, s: int) -> int:
     """
-
-    :param u:
-    :param v:
-    :param m:
-    :param r:
-    :param s:
-    :return:
+    获取 V 矩阵在 (r, s) 位置的元素的值，使 M 与 UV 间的 RMSE 最小
+    :param u: U
+    :param v: V
+    :param m: M
+    :param r: r
+    :param s: s
+    :return: U(r, s) 的值
     """
     assert u.shape[1] == v.shape[0], 'u & v can not be multiplied.'
     assert u.shape[0] == m.shape[0] and v.shape[1] == m.shape[1], 'the shape of m/u/v needs to be revised.'
