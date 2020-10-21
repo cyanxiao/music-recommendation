@@ -4,6 +4,8 @@ import numpy as np
 增量计算方法 1
 Deprecated
 """
+
+
 def _get_x_in_u(u_single_line_mat: np.ndarray, v_mat: np.ndarray,
                 user_preference_single_line: np.ndarray) -> np.ndarray:
     """
@@ -43,6 +45,8 @@ def _get_coefficient_x(v_single_line_mat: np.ndarray, user_preference_single_lin
 """
 增量计算方法 2
 """
+
+
 def get_x(u: np.ndarray, v: np.ndarray, m: np.ndarray, r: int, s: int) -> int:
     """
     获取 U 矩阵在 (r, s) 位置的元素的值，使 M 与 UV 间的 RMSE 最小
