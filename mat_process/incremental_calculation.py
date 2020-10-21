@@ -109,4 +109,9 @@ def process(user_preference_mat: np.ndarray, latent_factor_num: int) -> (np.ndar
     for r in range(v.shape[0]):
         for s in range(v.shape[1]):
             v[r, s] = get_y(u, v, user_preference_mat, r, s)
-    return np.dot(u, v), uv_decomposition.get_rmse(u, v, user_preference_mat)
+    filled_user_preference_mat = np.dot(u, v)
+    for r in range(user_preference_mat.shape[0]):
+        for s in range(user_preference_mat.shape[1]):
+            if np.isnan(user_preference_mat[r, s]):
+                user_preference_mat[r, s] = filled_user_preference_mat[r, s]
+    return user_preference_mat, uv_decomposition.get_rmse(u, v, user_preference_mat)
