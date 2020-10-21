@@ -1,4 +1,5 @@
 import numpy as np
+from mat_process import uv_decomposition
 
 """
 增量计算方法 1
@@ -92,3 +93,20 @@ def get_y(u: np.ndarray, v: np.ndarray, m: np.ndarray, r: int, s: int) -> int:
         numerator += single_numerator
         denominator += u[i, r] ** 2
     return numerator / denominator
+
+
+def process(user_preference_mat: np.ndarray, latent_factor_num: int) -> (np.ndarray, float):
+    """
+    获取增量计算分解后的用户偏好矩阵和 RMSE
+    :param user_preference_mat: 初始用户偏好矩阵
+    :param latent_factor_num: 潜在因子数量
+    :return: 补全后的用户偏好矩阵，RMSE
+    """
+    u, v = uv_decomposition.decompose(user_preference_mat, latent_factor_num)
+    for r in range(u.shape[0]):
+        for s in range(u.shape[1]):
+            u[r, s] = get_x(u, v, user_preference_mat, r, s)
+    for r in range(v.shape[0]):
+        for s in range(v.shape[1]):
+            v[r, s] = get_y(u, v, user_preference_mat, r, s)
+    return np.dot(u, v), uv_decomposition.get_rmse(u, v, user_preference_mat)
