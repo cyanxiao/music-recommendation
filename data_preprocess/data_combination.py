@@ -4,10 +4,9 @@ import dask.dataframe as dd
 
 
 def merge(result_data: str, merged_data: str):
-    user_artist = pd.read_csv(result_data, header=None, delimiter=' ', dtype={0: 'int', 1: 'int', 2: 'int'})
+    user_artist = pd.read_csv(result_data, header=None, index_col=None, delimiter=' ', dtype={0: 'int', 1: 'int', 2: 'int'})
     user_artist.columns = ['user', 'artist', 'num']
-    user_artist.groupby(['user', 'artist']).sum()
-    user_artist.to_csv(merged_data)
+    user_artist.groupby(['user', 'artist']).sum().to_csv(merged_data)
 
 
 def get_alias_to_name(artist_alias: str) -> dict:
@@ -43,7 +42,7 @@ def replace_alias(artist_alias: str, user_artist_data: str, result_data: str):
         lines.append(line)
         line = user_artist.readline()
     user_artist.close()
-    result = open(result_data, 'a')
+    result = open(result_data, 'w')
     for line in lines:
         result.write(line)
     result.close()
