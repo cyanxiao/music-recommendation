@@ -26,14 +26,16 @@ def get_alias_to_name(artist_alias: str) -> dict:
 
 
 def replace_alias(artist_alias: str, user_artist_data: str, result_data: str):
+    _ = 0
     alias_to_artist = get_alias_to_name(artist_alias)
     user_artist = open(user_artist_data)
     lines = []
     line = user_artist.readline()
     while line:
         line_content = line.split(' ')
-        if line_content[1] in alias_to_artist.keys():
-            line_content[1] = alias_to_artist[line_content[1]]
+        if int(line_content[1]) in alias_to_artist.keys():
+            _ += 1
+            line_content[1] = alias_to_artist[int(line_content[1])]
             line_content = " ".join(str(x) for x in line_content)
             lines.append(line_content)
             line = user_artist.readline()
@@ -45,3 +47,4 @@ def replace_alias(artist_alias: str, user_artist_data: str, result_data: str):
     for line in lines:
         result.write(line)
     result.close()
+    print(_)
