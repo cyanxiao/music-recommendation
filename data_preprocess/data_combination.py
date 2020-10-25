@@ -3,7 +3,8 @@ import pandas as pd
 import dask.dataframe as dd
 
 
-def merge(result_data: str, merged_data: str):
+def merge(artist_alias: str, user_artist_data: str, result_data: str, merged_data: str):
+    replace_alias(artist_alias, user_artist_data, result_data)
     user_artist = pd.read_csv(result_data, header=None, index_col=None, delimiter=' ', dtype={0: 'int', 1: 'int', 2: 'int'})
     user_artist.columns = ['user', 'artist', 'num']
     user_artist.groupby(['user', 'artist']).sum().to_csv(merged_data)
