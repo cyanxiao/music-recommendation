@@ -1,5 +1,6 @@
 import numpy as np
 import mat_process.uv_decomposition as uvd
+import scipy as scp
 
 
 def rmse(user_preference: np.ndarray, estimate: np.ndarray) -> np.float64:
@@ -63,5 +64,23 @@ def newton_uv(user_preference: np.ndarray, latent_factor: int = 1) -> np.ndarray
     :param user_preference: the user preference matrix.
     :param latent_factor: the number of the latent factors.
     :return: return the estimated results of user preference matrix with empty blank filled.
+    """
+    return np.array([])
+
+
+def gradient_desc_uv_sm(user_preference: np.ndarray, latent_factor: int = 1,
+                     max_iter: int = 100, step: float = 0.01, lamda: float = 0,
+                     least: float = 0.001, print_msg: bool = False) -> (np.ndarray, np.ndarray):
+
+    """
+    Decompose the sparse matrix.
+    :param user_preference:
+    :param latent_factor:
+    :param max_iter:
+    :param step:
+    :param lamda:
+    :param least:
+    :param print_msg:
+    :return: return U and V as np.ndarray.
     """
     return None
