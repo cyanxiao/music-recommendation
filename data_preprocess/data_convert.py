@@ -1,4 +1,4 @@
-import pandas as pd
+from scipy.sparse import *
 import numpy as np
 import gc
 
@@ -344,3 +344,33 @@ def read_matrix(path: str, sep: str = ",") -> np.ndarray:
     return np.array(mtxl, dtype="float64")
 
 
+def get_sparse_matrix_from_file(formalized_data: str, sep: str = ",") -> coo_matrix:
+    """
+    把已经经过正则化的数据转换成用户偏好矩阵的稀疏矩阵表现形式 coo_matrix。
+    :param sep: 文件的分隔符
+    :param formalized_data: 经过转换的数据的 路径 + 文件。
+    :return: 转换成的稀疏矩阵.
+    """
+    f = open(formalized_data, mode="r", encoding="utf-8")
+    rows = []
+    columns = []
+    data = []
+    cnt = 0
+    last = -1
+    artist_cnt = -1
+    for line in f:
+        args = line.strip().split(sep)
+        user = int(args[0])
+        artist = int(args[1])
+        if last != user:
+            last = user
+            cnt = cnt + 1
+        if artist > artist_cnt:
+            artist_cnt = artist
+        rows.append(user)
+        columns.append(artist)
+        data.append(int(args[2]))
+    f.close()
+    del f
+    gc.collect()
+    return coo_matrix((rows, columns, data), (cnt, artist_cnt + 1), dtype=float)
