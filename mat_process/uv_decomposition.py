@@ -31,7 +31,7 @@ def sparse_mat_decompose(user_preference: ss.csr_matrix, latent_factor_num: int 
     init_element = np.sqrt(avg / latent_factor_num)
     u_init, v_init = np.full((rows_num, latent_factor_num), init_element), \
                      np.full((latent_factor_num, column_num), init_element)
-    return u_init, v_init
+    return ss.csr_matrix(u_init), ss.csr_matrix(v_init)
 
 
 def get_rmse(u_mat: np.ndarray, v_mat: np.ndarray, user_preference: np.ndarray) -> np.float64:
