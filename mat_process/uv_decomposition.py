@@ -51,3 +51,27 @@ def get_rmse(u_mat: np.ndarray, v_mat: np.ndarray, user_preference: np.ndarray) 
             else:
                 residue_mat[i, j] = user_preference[i, j] - expected_mat[i, j]
     return np.sqrt(np.sum(residue_mat ** 2) / np.size(residue_mat))
+
+
+def sparse_mat_get_rmse(u_mat: ss.csr_matrix, v_mat: ss.csr_matrix, user_preference: ss.csr_matrix,
+                        show_process: bool = True) -> np.float64:
+    """
+    稀疏矩阵情况下计算 RMSE
+    :param u_mat: U
+    :param v_mat: V
+    :param user_preference: 用户偏好矩阵
+    :param show_process: 是否显示计算进度
+    :return: RMSE
+    """
+    non_zero = user_preference.nonzero()
+    residue = 0
+    total = non_zero[0].size
+    for i in range(non_zero[0].size):
+        if show_process:
+            print('step', i, 'of', total)
+        conducted = u_mat[non_zero[0][i], :].dot(v_mat[:, non_zero[1][i]])
+        user_conducted = user_preference[non_zero[0][i], non_zero[1][i]]
+        # print("user_conducted", user_conducted, "conducted", conducted)
+        residue_each_element = user_conducted - conducted[0, 0]
+        residue += residue_each_element ** 2
+    return np.sqrt(residue / np.size(user_preference))
