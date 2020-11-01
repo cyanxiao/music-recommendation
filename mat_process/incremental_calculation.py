@@ -138,7 +138,7 @@ def sparse_get_x(u: np.ndarray, v: np.ndarray, m: np.ndarray, r: int, s: int) ->
             continue
         numerator += single_numerator
         denominator += v[s, j] ** 2
-        print('sparse_get_x', 'step', j, 'of', v.shape[1])
+        # print('sparse_get_x', 'step', j, 'of', v.shape[1])
     return numerator / denominator
 
 
