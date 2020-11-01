@@ -115,3 +115,75 @@ def process(user_preference_mat: np.ndarray, latent_factor_num: int) -> (np.ndar
             if np.isnan(user_preference_mat[r, s]):
                 user_preference_mat[r, s] = filled_user_preference_mat[r, s]
     return user_preference_mat, uv_decomposition.get_rmse(u, v, user_preference_mat)
+
+
+def sparse_get_x(u: np.ndarray, v: np.ndarray, m: np.ndarray, r: int, s: int) -> float:
+    """
+    获取 U 矩阵在 (r, s) 位置的元素的值，使 M 与 UV 间的 RMSE 最小
+    :param u: U
+    :param v: V
+    :param m: M
+    :param r: r
+    :param s: s
+    :return: U(r, s) 的值
+    """
+    assert u.shape[1] == v.shape[0], 'u & v can not be multiplied.'
+    assert u.shape[0] == m.shape[0] and v.shape[1] == m.shape[1], 'the shape of m/u/v needs to be revised.'
+    numerator = 0.0
+    denominator = 0.0
+    for j in range(v.shape[1]):
+        sum_of_u_v = np.dot(u[r, :], v[:, j]) - u[r, s] * v[s, j]
+        single_numerator = v[s, j] * (m[r, j] - sum_of_u_v)
+        if np.isnan(m[r, j]):
+            continue
+        numerator += single_numerator
+        denominator += v[s, j] ** 2
+        print('sparse_get_x', 'step', j, 'of', v.shape[1])
+    return numerator / denominator
+
+
+def sparse_get_y(u: np.ndarray, v: np.ndarray, m: np.ndarray, r: int, s: int) -> float:
+    """
+    获取 V 矩阵在 (r, s) 位置的元素的值，使 M 与 UV 间的 RMSE 最小
+    :param u: U
+    :param v: V
+    :param m: M
+    :param r: r
+    :param s: s
+    :return: U(r, s) 的值
+    """
+    assert u.shape[1] == v.shape[0], 'u & v can not be multiplied.'
+    assert u.shape[0] == m.shape[0] and v.shape[1] == m.shape[1], 'the shape of m/u/v needs to be revised.'
+    numerator = 0.0
+    denominator = 0.0
+    for i in range(u.shape[0]):
+        sum_of_u_v = np.dot(u[i, :], v[:, s]) - u[i, r] * v[r, s]
+        single_numerator = u[i, r] * (m[i, s] - sum_of_u_v)
+        if np.isnan(m[i, s]):
+            continue
+        numerator += single_numerator
+        denominator += u[i, r] ** 2
+    return numerator / denominator
+
+
+def sparse_process(user_preference_mat: np.ndarray, latent_factor_num: int, user: int) -> (np.ndarray, float):
+    """
+    获取增量计算分解后的用户偏好矩阵（仅待查询用户的一行）和 RMSE
+    :param user_preference_mat: 初始用户偏好矩阵
+    :param latent_factor_num: 潜在因子数量
+    :param user: 要查询的用户处于的*行数*
+    :return: 补全后的用户偏好矩阵（仅待查询用户的一行）和 RMSE（仅待查询用户的一行）
+    """
+    u, v = uv_decomposition.sparse_mat_decompose(user_preference_mat, latent_factor_num)
+    u = u.toarray()
+    v = v.toarray()
+    print("UV decomposition finished.")
+    r = user
+    for s in range(u.shape[1]):
+        u[r, s] = sparse_get_x(u, v, user_preference_mat, r, s)
+    print("U calculation finished.")
+    for r in range(v.shape[0]):
+        for s in range(v.shape[1]):
+            v[r, s] = sparse_get_y(u, v, user_preference_mat, r, s)
+    filled_user_preference_mat = np.dot(u[user, :], v) # 仅待查询用户的一行
+    return filled_user_preference_mat
