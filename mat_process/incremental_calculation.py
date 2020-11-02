@@ -180,10 +180,12 @@ def sparse_process(user_preference_mat: np.ndarray, latent_factor_num: int, user
     print("UV decomposition finished.")
     r = user
     for s in range(u.shape[1]):
+        print('Calculating', r, ',', s, 'in U.')
         u[r, s] = sparse_get_x(u, v, user_preference_mat, r, s)
     print("U calculation finished.")
     for r in range(v.shape[0]):
         for s in range(v.shape[1]):
+            print('Calculating', r, ',', s, 'in V.')
             v[r, s] = sparse_get_y(u, v, user_preference_mat, r, s)
     filled_user_preference_mat = np.dot(u[user, :], v) # 仅待查询用户的一行
     return filled_user_preference_mat
