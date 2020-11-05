@@ -117,6 +117,11 @@ def process(user_preference_mat: np.ndarray, latent_factor_num: int) -> (np.ndar
     return user_preference_mat, uv_decomposition.get_rmse(u, v, user_preference_mat)
 
 
+"""
+增量计算方法 3
+"""
+
+
 def sparse_get_x(u: np.ndarray, v: np.ndarray, m: np.ndarray, r: int, s: int) -> float:
     """
     获取 U 矩阵在 (r, s) 位置的元素的值，使 M 与 UV 间的 RMSE 最小
@@ -187,7 +192,7 @@ def sparse_process(user_preference_mat: np.ndarray, latent_factor_num: int, user
         for s in range(v.shape[1]):
             print('Calculating', r, ',', s, 'in V.')
             v[r, s] = sparse_get_y(u, v, user_preference_mat, r, s)
-    filled_user_preference_mat = np.dot(u[user, :], v) # 仅待查询用户的一行
+    filled_user_preference_mat = np.dot(u[user, :], v)  # 仅待查询用户的一行
     return filled_user_preference_mat
 
 
