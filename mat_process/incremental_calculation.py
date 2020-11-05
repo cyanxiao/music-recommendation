@@ -189,3 +189,8 @@ def sparse_process(user_preference_mat: np.ndarray, latent_factor_num: int, user
             v[r, s] = sparse_get_y(u, v, user_preference_mat, r, s)
     filled_user_preference_mat = np.dot(u[user, :], v) # 仅待查询用户的一行
     return filled_user_preference_mat
+
+
+"""
+测试集和训练集划分
+"""
