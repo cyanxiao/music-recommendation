@@ -1,6 +1,7 @@
 import numpy as np
 import mat_process.uv_decomposition as uvd
 from scipy.sparse import *
+import time as tt
 
 
 def rmse(user_preference: np.ndarray, estimate: np.ndarray) -> np.float64:
@@ -127,4 +128,58 @@ def gradient_desc_uv_sparse(user_preference: csr_matrix, latent_factor: int = 1,
             v_opt = v.copy()
         u = u + step * (k.dot(v.T) - lamda * u)
         v = v + step * (u.T.dot(k) - lamda * v)
+    print("# optimal loss : " + str(optimal))
     return u_opt, v_opt
+
+
+def sampler(data: list, fold: 0, k: int = 10) -> (list, list):
+    """
+    取样器，把一个列表分为 k 份，取其中一份然后作为返回值 b，剩下的为返回值 a
+    :param data: 数据集。
+    :param fold: 要第几份。
+    :param k: 分为 k 份。
+    :return: 剩下的数据，选出的数据
+    """
+    length = len(data) / k
+    left = int(np.ceil(fold * length))
+    right = int(np.ceil(fold * length + length))
+    a = data[left:right].copy()
+    b = data[0:left].copy() + data[right:len(data)].copy()
+    return b, a
+
+
+def k_fold_validation_gd(user_preference: csr_matrix, user: int = 0, k: int = 6) -> None:
+    assert k >= 2
+    user_data = user_preference.getrow(user)
+    gross_loss = 0
+    nz = user_data.nonzero()
+    for i in range(k):
+        train_row, test_row = sampler(nz[0].tolist(), i, k=k)
+        train_col, test_col = sampler(nz[1].tolist(), i, k=k)
+        data_in_train = [user_data[train_row[i], train_col[i]] for i in range(len(train_row))]
+        data_in_test = [user_data[test_row[i], test_col[i]] for i in range(len(test_row))]
+        train_data = coo_matrix((data_in_train, (train_row, train_col)), shape=user_data.shape, dtype=user_data.dtype)
+        test_data = coo_matrix((data_in_test, (test_row, test_col)), shape=user_data.shape, dtype=user_data.dtype)
+        train_data = train_data.tocsr()
+        test_data = test_data.tocsr()
+        loss = test_gd(train_data, test_data)
+        gross_loss = gross_loss + loss
+    gross_loss = gross_loss / k
+    print("# the Average RMSE: " + str(gross_loss))
+
+
+def test_gd(training_data: csr_matrix, test_data: csr_matrix, show_msg: bool = True):
+    t1 = tt.time()
+    u, v = gradient_desc_uv_sparse(training_data, 2, step=0.0025)
+    t2 = tt.time()
+    result = u.dot(v)
+    nz = test_data.nonzero()
+    data_in_test = np.array([test_data[nz[0][i], nz[1][i]] for i in range(len(nz))])
+    data_in_result = np.array([result[nz[0][i], nz[1][i]] for i in range(len(nz))])
+    a = np.sum(data_in_test - data_in_result) ** 2
+    a = a / np.size(data_in_test)
+    if show_msg:
+        print("# RMSE of test set: " + str(a))
+        print("  calculating time: " + str(t2 - t1) + "s")
+        print()
+    return a
